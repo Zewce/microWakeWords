@@ -249,7 +249,7 @@ text:
     max_length: 255
     set_action:
       - lambda: |-
-          if (id(wake_engine_select).state == "openwakeword") {
+          if (strcmp(id(wake_engine_select).current_option(), "openwakeword") == 0) {
             id(oww).set_url(x);
           }
 
@@ -265,7 +265,7 @@ text:
     max_length: 255
     set_action:
       - lambda: |-
-          if (id(wake_engine_select).state == "nanowakeword") {
+          if (strcmp(id(wake_engine_select).current_option(), "nanowakeword") == 0) {
             id(oww).set_url(x);
           }
 
@@ -389,7 +389,7 @@ voice_assistant:
         id(mww).set_capture_upload_enabled(id(capture_wake_audio).state);
         id(mww).set_capture_close_misses_enabled(id(capture_close_misses).state);
         id(mww).set_capture_close_miss_probability_cutoff(id(close_miss_threshold).state);
-        id(mww).set_detection_profile(id(wake_word_profile).state);
+        id(mww).set_detection_profile(std::string(id(wake_word_profile).current_option()));
         if (id(wake_word_sensitivity).current_option() == "Slightly sensitive") {
           id(mww).set_wake_word_probability_cutoff(${wake_cutoff_slight});
         } else if (id(wake_word_sensitivity).current_option() == "Moderately sensitive") {
@@ -398,7 +398,7 @@ voice_assistant:
           id(mww).set_wake_word_probability_cutoff(${wake_cutoff_very});
         }
         id(mww).set_capture_upload_url(id(trainer_app_url).state);
-        if (id(wake_engine_select).state == "nanowakeword") {
+        if (strcmp(id(wake_engine_select).current_option(), "nanowakeword") == 0) {
           id(oww).set_url(id(nanowakeword_server_url).state);
           id(oww).set_stream_path("/api/nanowakeword/stream");
         } else {
@@ -456,7 +456,7 @@ voice_assistant:
   on_wake_word_detected:
     - if:
         condition:
-          lambda: return id(wake_engine_select).state != "microwakeword";
+          lambda: return strcmp(id(wake_engine_select).current_option(), "microwakeword") != 0;
         then:
           - lambda: |-
               id(openwakeword_wake_detected) = true;
@@ -483,7 +483,7 @@ voice_assistant:
   on_listening:
     - if:
         condition:
-          lambda: return id(wake_engine_select).state == "microwakeword" || id(openwakeword_wake_detected) || id(push_to_intercom_active);
+          lambda: return strcmp(id(wake_engine_select).current_option(), "microwakeword") == 0 || id(openwakeword_wake_detected) || id(push_to_intercom_active);
         then:
           - lambda: id(voice_assistant_phase) = 2;
         else:
@@ -492,21 +492,21 @@ voice_assistant:
   on_stt_vad_start:
     - if:
         condition:
-          lambda: return id(wake_engine_select).state == "microwakeword" || id(openwakeword_wake_detected) || id(push_to_intercom_active);
+          lambda: return strcmp(id(wake_engine_select).current_option(), "microwakeword") == 0 || id(openwakeword_wake_detected) || id(push_to_intercom_active);
         then:
           - lambda: id(voice_assistant_phase) = 3;
           - script.execute: control_leds
   on_stt_vad_end:
     - if:
         condition:
-          lambda: return id(wake_engine_select).state == "microwakeword" || id(openwakeword_wake_detected) || id(push_to_intercom_active);
+          lambda: return strcmp(id(wake_engine_select).current_option(), "microwakeword") == 0 || id(openwakeword_wake_detected) || id(push_to_intercom_active);
         then:
           - lambda: id(voice_assistant_phase) = 4;
           - script.execute: control_leds
   on_tool_call_start:
     - if:
         condition:
-          lambda: return id(wake_engine_select).state == "microwakeword" || id(openwakeword_wake_detected) || id(push_to_intercom_active);
+          lambda: return strcmp(id(wake_engine_select).current_option(), "microwakeword") == 0 || id(openwakeword_wake_detected) || id(push_to_intercom_active);
         then:
           - lambda: id(voice_assistant_phase) = 6;
           - script.execute: control_leds
@@ -516,7 +516,7 @@ voice_assistant:
           and:
             # A nonempty x variable means a streaming TTS url was sent to the media player
             - lambda: 'return !x.empty();'
-            - lambda: return id(wake_engine_select).state == "microwakeword" || id(openwakeword_wake_detected) || id(push_to_intercom_active);
+            - lambda: return strcmp(id(wake_engine_select).current_option(), "microwakeword") == 0 || id(openwakeword_wake_detected) || id(push_to_intercom_active);
         then:
           - lambda: id(voice_assistant_phase) = 5;
           - script.execute: control_leds
@@ -528,7 +528,7 @@ voice_assistant:
           and:
             # The intent_progress trigger didn't start the TTS Reponse
             - lambda: 'return id(voice_assistant_phase) != 5;'
-            - lambda: return id(wake_engine_select).state == "microwakeword" || id(openwakeword_wake_detected) || id(push_to_intercom_active);
+            - lambda: return strcmp(id(wake_engine_select).current_option(), "microwakeword") == 0 || id(openwakeword_wake_detected) || id(push_to_intercom_active);
         then:
           - lambda: id(voice_assistant_phase) = 5;
           - script.execute: control_leds
@@ -581,4 +581,3 @@ voice_assistant:
     - script.execute: control_leds
   on_timer_tick:
     - script.execute: control_leds
-    
