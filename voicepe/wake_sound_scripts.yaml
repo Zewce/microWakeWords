@@ -11,7 +11,7 @@ script:
                 id: external_media_player
                 announcement: true
       - lambda: |-
-          const auto selected = id(wake_sound_select).state;
+          const auto selected = std::string(id(wake_sound_select).current_option());
           if (selected == "No Sound") {
             return;
           }
