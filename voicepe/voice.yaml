@@ -70,11 +70,17 @@ micro_wake_word:
     gain_factor: 4
   stop_after_detection: false
   models:
-    - model: ${wake_word_model_url}
+    - model:
+        url: ${wake_word_model_url}
+        type: http
       id: ${wake_word_name}
-    - model: ${wake_word_2_model_url}
+    - model:
+        url: ${wake_word_2_model_url}
+        type: http
       id: ${wake_word_2_name}
-    - model: https://raw.githubusercontent.com/Zewce/microWakeWords/7c117340454ba8a997ee694d1aaaf76d59f245d1/shared/assets/wake_words/stop.json
+    - model:
+        url: https://raw.githubusercontent.com/Zewce/microWakeWords/7c117340454ba8a997ee694d1aaaf76d59f245d1/shared/assets/wake_words/stop.json
+        type: http
       id: stop
       internal: true
   vad:
