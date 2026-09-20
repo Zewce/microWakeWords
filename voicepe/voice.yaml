@@ -72,7 +72,9 @@ micro_wake_word:
   models:
     - model: ${wake_word_model_url}
       id: ${wake_word_name}
-    - model: https://raw.githubusercontent.com/Zewce/microWakeWords/main/shared/assets/wake_words/stop.json
+    - model: ${wake_word_2_model_url}
+      id: ${wake_word_2_name}
+    - model: https://raw.githubusercontent.com/Zewce/microWakeWords/7c117340454ba8a997ee694d1aaaf76d59f245d1/shared/assets/wake_words/stop.json
       id: stop
       internal: true
   vad:
